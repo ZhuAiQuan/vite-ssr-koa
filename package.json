@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "npm run build:client && npm run build:server",
     "preview": "vite preview",
     "dev:server": "set NODE_ENV=development&& node server",
     "build:client": "vite build --ssrManifest --outDir dist/client",
