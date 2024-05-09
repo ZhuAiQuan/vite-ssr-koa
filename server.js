@@ -7,16 +7,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const resolve = (p) => path.resolve(__dirname, p);
 
-async function createServerApp(
-  root = process.cwd(),
-  isProd = process.env.NODE_ENV === "production"
-) {
+async function createServerApp(root = process.cwd(), isProd = process.env.NODE_ENV === "production") {
   const app = new Koa();
   const indexProd = isProd
     ? fs.readFileSync(resolve("./dist/client/index.html"), "utf-8")
     : fs.readFileSync(resolve("index.html"), "utf-8");
   const manifest = isProd
-    ? fs.readFileSync(resolve("./dist/client/ssr-manifest.json"), "utf-8")
+    ? fs.readFileSync(resolve("./dist/client/.vite/ssr-manifest.json"), "utf-8")
     : {};
   let vite;
   if (isProd) {
@@ -33,17 +30,19 @@ async function createServerApp(
     vite = await (
       await import("vite")
     ).createServer({
-      root,
-      server: {
-        middlewareMode: "ssr",
-        watch: {
-          usePolling: true,
-          interval: 100,
-        },
-        // hmr: {
-        //   port: hmrPort,
-        // },
-      },
+      // root,
+      // server: {
+      //   middlewareMode: "ssr",
+      //   watch: {
+      //     usePolling: true,
+      //     interval: 100,
+      //   },
+      //   // hmr: {
+      //   //   port: hmrPort,
+      //   // },
+      // },
+      server: { middlewareMode: true },
+      appType: "custom",
     });
     app.use((await import("koa-connect")).default(vite.middlewares));
   }
@@ -57,11 +56,7 @@ async function createServerApp(
         template = await vite.transformIndexHtml(ctx.originalUrl, indexProd);
         render = (await vite.ssrLoadModule("/src/entry-server.ts")).render;
       }
-      const {
-        html: appHtml,
-        preloadLinks,
-        piniaState,
-      } = await render(ctx.originalUrl, manifest);
+      const { html: appHtml, preloadLinks, piniaState } = await render(ctx.originalUrl, manifest);
       const html = template
         .replace("<!--ssr-outlet-->", appHtml)
         .replace("<!--preload-links-->", preloadLinks)
@@ -72,7 +67,8 @@ async function createServerApp(
     } catch (e) {
       // 兜底 防止报错直接崩溃
       vite && vite.ssrFixStacktrace(e);
-      ctx.status(500).end(e.stack);
+      ctx.status = 500;
+      ctx.body = e.stack;
     }
   });
   return {

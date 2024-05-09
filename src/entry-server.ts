@@ -4,10 +4,9 @@ import { basename } from 'node:path';
 import devalue from '@nuxt/devalue';
 
 export async function render(path: string, manifest: any) {
-  const { app, router, store, initialState } = createSSR();
+  const { app, router, initialState } = createSSR();
   router.push(path);
   await router.isReady();
-  await fetch('https://test.rmg-casino.com/pack_config.json');
   // 在这里预取数据并传回到pinia
   const ctx: any = {};
   const html = await renderToString(app, ctx);
@@ -23,10 +22,11 @@ export async function render(path: string, manifest: any) {
 }
 
 function renderPreloadLinks(modules: string[], manifest: any) {
-  let links = ''
-  const seen = new Set()
+  let links = '';
+  if (!manifest) return links;
+  const seen = new Set();
   modules.forEach((id) => {
-    const files = manifest[id]
+    const files = manifest[id];
     if (files) {
       files.forEach((file: string) => {
         if (!seen.has(file)) {

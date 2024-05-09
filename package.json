@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node server",
     "build": "npm run build:client && npm run build:server",
     "preview": "vite preview",
     "dev:server": "set NODE_ENV=development&& node server",
