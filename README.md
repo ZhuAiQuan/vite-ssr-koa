@@ -6,7 +6,7 @@
 
 - 安装依赖 `pnpm i`
 
-- 运行服务 `pnpm dev:server`
+- 运行服务 `pnpm dev`
 
 - 构建 `pnpm build`
 

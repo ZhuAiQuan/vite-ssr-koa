@@ -7,7 +7,6 @@
     "dev": "node server",
     "build": "npm run build:client && npm run build:server",
     "preview": "vite preview",
-    "dev:server": "set NODE_ENV=development&& node server",
     "build:client": "vite build --ssrManifest --outDir dist/client",
     "build:server": "vite build --ssr src/entry-server.ts --outDir dist/server",
     "start": "set NODE_ENV=production&& node server"
