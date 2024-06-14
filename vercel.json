@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "pnpm run build",
+      "src": "npm run build",
       "use": "@vercel/node"
     }
   ],
